@@ -1,168 +1,90 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp } from 'lucide-react';
 
 interface PortfolioCardProps {
-  usdBalance: number;
-  xlmRate: number;
+  usdBalance:  number;
+  xlmRate:     number;
   historyData: number[];
-  yieldAPY: number;
+  yieldAPY:    number;
   yieldEarned: number;
 }
 
-export default function PortfolioCard({
-  usdBalance,
-  xlmRate,
-  historyData,
-  yieldAPY,
-  yieldEarned,
-}: PortfolioCardProps) {
-  const xlmBalance = usdBalance / xlmRate;
+export default function PortfolioCard({ usdBalance, xlmRate, historyData, yieldAPY, yieldEarned }: PortfolioCardProps) {
+  const xlmBalance    = usdBalance / xlmRate;
   const changePercent = 5.24;
 
-  // SVG Sparkline
-  const svgW = 560;
-  const svgH = 110;
-  const pad = 8;
-  const minVal = Math.min(...historyData);
-  const maxVal = Math.max(...historyData);
-  const range = maxVal - minVal || 1;
+  /* ── sparkline ───────────────────────────────────────────────── */
+  const W = 560, H = 120, pad = 10;
+  const minV = Math.min(...historyData);
+  const maxV = Math.max(...historyData);
+  const range = maxV - minV || 1;
 
   const pts = historyData.map((v, i) => {
-    const x = pad + (i / (historyData.length - 1)) * (svgW - pad * 2);
-    const y = svgH - pad - ((v - minVal) / range) * (svgH - pad * 2);
+    const x = pad + (i / (historyData.length - 1)) * (W - pad * 2);
+    const y = H - pad - ((v - minV) / range) * (H - pad * 2);
     return `${x},${y}`;
   });
+  const polyline = pts.join(' ');
+  const area = `M ${pad},${H - pad} L ${pts.join(' L ')} L ${W - pad},${H - pad} Z`;
 
-  const polylinePoints = pts.join(' ');
-  const areaPath = `M ${pad},${svgH - pad} L ${pts.join(' L ')} L ${svgW - pad},${svgH - pad} Z`;
-
-  const fmt = (v: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
-
-  const fmtXLM = (v: number) =>
-    new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(v) + ' XLM';
+  const fmt    = (v: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
+  const fmtXLM = (v: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(v) + ' XLM';
 
   return (
-    <div className="h-full flex flex-col">
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-3">
-        <span
-          className="text-[10px] font-bold tracking-[0.12em] uppercase"
-          style={{ color: 'var(--text-muted)' }}
-        >
-          Net Account Value
-        </span>
-        <span
-          className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
-          style={{ color: '#16a34a', background: 'rgba(22,163,74,0.10)' }}
-        >
-          <TrendingUp size={11} />
-          +{changePercent}%
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+        <span style={label}>Net Account Value</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.7rem', fontWeight: 700, padding: '4px 10px', borderRadius: 99, color: '#15803d', background: 'rgba(22,163,74,0.09)' }}>
+          <TrendingUp size={11} /> +{changePercent}%
         </span>
       </div>
 
-      {/* Big USD balance */}
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={usdBalance}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -16 }}
-          transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
-        >
-          <h2
-            className="font-extrabold tracking-tighter font-mono leading-none"
-            style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', color: 'var(--text-primary)' }}
-          >
-            {fmt(usdBalance)}
-          </h2>
-          <p
-            className="text-base font-semibold tracking-tight font-mono mt-1"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {fmtXLM(xlmBalance)}
-          </p>
-        </motion.div>
-      </AnimatePresence>
+      {/* Balance */}
+      <div>
+        <div style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.04em', fontFamily: 'monospace', color: '#0a0a0f', lineHeight: 1 }}>
+          {fmt(usdBalance)}
+        </div>
+        <div style={{ fontSize: '0.85rem', fontWeight: 600, fontFamily: 'monospace', color: '#9ca3af', marginTop: 4 }}>
+          {fmtXLM(xlmBalance)}
+        </div>
+      </div>
 
-      {/* Sparkline chart */}
-      <div className="flex-1 my-4 relative min-h-[90px]">
-        <svg
-          viewBox={`0 0 ${svgW} ${svgH}`}
-          className="w-full h-full overflow-visible"
-          preserveAspectRatio="none"
-        >
+      {/* Sparkline */}
+      <div style={{ flex: 1, marginTop: 20, marginBottom: 20, minHeight: 90 }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: '100%', display: 'block' }} preserveAspectRatio="none">
           <defs>
-            <linearGradient id="area-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stopColor="rgba(139,92,246,0.18)" />
-              <stop offset="60%"  stopColor="rgba(37,99,235,0.07)" />
-              <stop offset="100%" stopColor="rgba(37,99,235,0.00)" />
-            </linearGradient>
-            <linearGradient id="line-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"   stopColor="#8b5cf6" />
-              <stop offset="50%"  stopColor="#2563eb" />
-              <stop offset="100%" stopColor="#06b6d4" />
+            <linearGradient id="pg-area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="rgba(10,10,15,0.15)" />
+              <stop offset="100%" stopColor="rgba(10,10,15,0)"    />
             </linearGradient>
           </defs>
-
-          {/* Filled area */}
-          <motion.path
-            d={areaPath}
-            fill="url(#area-fill)"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          />
-
-          {/* Crisp stroked line */}
-          <motion.polyline
-            fill="none"
-            stroke="url(#line-grad)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            points={polylinePoints}
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1.6, ease: 'easeInOut', delay: 0.2 }}
-          />
+          <path d={area} fill="url(#pg-area)" />
+          <polyline fill="none" stroke="#111827" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyline} />
         </svg>
       </div>
 
-      {/* Three-column footer stats */}
-      <div
-        className="grid grid-cols-3 pt-4"
-        style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
-      >
+      {/* Footer stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 16 }}>
         {[
-          { label: 'Stellar Yield Pool', value: 'USDC Anchor' },
-          { label: 'Staking APY',        value: `${yieldAPY.toFixed(2)}%` },
-          { label: 'Accumulated ALE',    value: `+${yieldEarned.toFixed(2)}` },
-        ].map(({ label, value }, i) => (
-          <div
-            key={label}
-            className={`px-4 flex flex-col gap-1 ${i > 0 ? 'border-l' : ''}`}
-            style={{ borderColor: 'rgba(0,0,0,0.06)' }}
-          >
-            <span
-              className="text-[9px] font-bold uppercase tracking-[0.1em]"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              {label}
-            </span>
-            <span
-              className="text-xl font-extrabold tracking-tight font-mono"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              {value}
-            </span>
+          { lbl: 'Yield Pool',    val: 'USDC Anchor' },
+          { lbl: 'Staking APY',   val: `${yieldAPY.toFixed(2)}%` },
+          { lbl: 'Accumulated',   val: `+${yieldEarned.toFixed(2)}` },
+        ].map(({ lbl, val }, i) => (
+          <div key={lbl} style={{ paddingLeft: i > 0 ? 16 : 0, paddingRight: 16, borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.06)' : 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={label}>{lbl}</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.02em', fontFamily: 'monospace', color: '#0a0a0f' }}>{val}</span>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
+const label: React.CSSProperties = {
+  fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em',
+  textTransform: 'uppercase', color: '#9ca3af',
+};

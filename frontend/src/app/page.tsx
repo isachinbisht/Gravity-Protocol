@@ -1,188 +1,108 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Activity, CheckCircle, AlertCircle, Wallet } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Activity, AlertCircle, CheckCircle, RefreshCcw, TrendingUp, Wallet, ArrowRight, ExternalLink } from 'lucide-react';
 
-import LiquidBackground  from '@/components/liquid-background';
-import { SpecularCard }  from '@/components/specular-card';
-import PortfolioCard     from '@/components/portfolio-card';
-import AllocationCard    from '@/components/allocation-card';
-import InteractionCard   from '@/components/interaction-card';
+import AntigravityBackground from '@/components/antigravity-bg';
+import { Navbar }            from '@/components/navbar';
+import PortfolioCard         from '@/components/portfolio-card';
+import AllocationCard        from '@/components/allocation-card';
+import InteractionCard       from '@/components/interaction-card';
 import { useGravityProtocol } from '@/hooks/useGravityProtocol';
 
-const XLM_RATE = 0.12; // 1 XLM = $0.12 USD (used for display only until price oracle is live)
+const XLM_RATE = 0.12;
 
 export default function Dashboard() {
   const gp = useGravityProtocol();
 
-  // ── Derived display values ──────────────────────────────────────────────────
-  // When NAV is live from chain we use it; otherwise fall back to share-based estimate
-  const totalUsd   = gp.navUsd > 0 ? gp.navUsd : gp.vaultShares; // placeholder until oracle
-  const xlmUsd     = totalUsd * (gp.xlmWeight  / 100);
-  const usdcUsd    = totalUsd * (gp.usdcWeight / 100);
-  const stakedUsd  = xlmUsd; // staked portion = XLM allocation
-  const tvlXLM     = (totalUsd / XLM_RATE).toLocaleString('en-US', { maximumFractionDigits: 0 });
-
-  // Mock sparkline history (grows each time data refreshes)
-  const history = [865000, 872000, 862000, 880000, 876000, 882000, totalUsd > 0 ? totalUsd : 900000];
+  const totalUsd  = gp.navUsd > 0 ? gp.navUsd : gp.vaultShares || 900_000;
+  const xlmUsd    = totalUsd * (gp.xlmWeight  / 100);
+  const usdcUsd   = totalUsd * (gp.usdcWeight / 100);
+  const stakedUsd = xlmUsd;
+  const tvlXLM    = (totalUsd / XLM_RATE).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  const history   = [865000, 872000, 862000, 880000, 876000, 882000, totalUsd];
 
   return (
-    <div className="app-shell">
-      <LiquidBackground />
+    <div style={{ background: '#f8f8fa', minHeight: '100vh', position: 'relative' }}>
+      <AntigravityBackground />
+      <Navbar />
 
-      {/* ─── Navbar ─── */}
-      <header className="navbar">
-        <nav className="navbar-inner">
-          <a className="nav-logo" href="#">
-            <span className="nav-logo-icon">
-              <Coins size={14} color="#fff" />
-            </span>
-            <span className="nav-logo-text">Gravity Protocol</span>
-          </a>
+      <main style={{ maxWidth: 1120, margin: '0 auto', padding: '40px 28px 100px' }}>
 
-          <ul className="nav-links">
-            {['Dashboard', 'Assets', 'Liquidity', 'Stellar Bridge'].map((l) => (
-              <li key={l}>
-                <a className={`nav-link ${l === 'Dashboard' ? 'active' : ''}`}>{l}</a>
-              </li>
-            ))}
-          </ul>
-
-          <div className="nav-right">
-            {/* Stellar network badge */}
-            <div className="network-badge" style={{ display: 'flex' }}>
-              <svg width="14" height="14" viewBox="0 0 14 14">
-                <circle cx="7" cy="7" r="3" fill="#2563eb" opacity="0.8"/>
-                <circle cx="7" cy="7" r="6" stroke="#2563eb" strokeWidth="1.2" opacity="0.3"/>
-              </svg>
-              Stellar Testnet
-            </div>
-
-            {/* Wallet chip — shows connect button or address */}
-            {gp.isConnected && gp.shortAddress ? (
-              <div className="wallet-chip">
-                <span className="wallet-avatar"
-                  style={{ background: 'linear-gradient(135deg,#8b5cf6,#06b6d4)' }}
-                />
-                {gp.shortAddress}
-              </div>
-            ) : (
-              <button
-                onClick={gp.connectWallet}
-                className="wallet-chip"
-                style={{ cursor: 'pointer' }}
-              >
-                <Wallet size={14} />
-                {gp.isFreighterInstalled ? 'Connect Wallet' : 'Install Freighter'}
-              </button>
-            )}
-          </div>
-        </nav>
-      </header>
-
-      {/* ─── Main ─── */}
-      <main className="main-content">
-
-        {/* Page header */}
-        <div className="page-header">
-          <div className="page-header-left">
-            <motion.h1
-              initial={{ opacity: 0, y: -14 }}
-              animate={{ opacity: 1,  y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 14 }}
-            >
+        {/* ── Page header ─────────────────────────────────────────── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, paddingTop: 20 }}>
+          <div>
+            <div style={labelStyle}>Gravity Protocol · Dashboard</div>
+            <h1 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 900, letterSpacing: '-0.04em', color: '#0a0a0f', marginTop: 6, lineHeight: 1.05 }}>
               Stellar Asset Core
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1,  y: 0 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.08 }}
-            >
-              Decentralized yield generation and asset management platform.
-              <br />TVL: {tvlXLM} XLM
-            </motion.p>
+            </h1>
+            <p style={{ fontSize: '0.75rem', fontWeight: 500, color: '#9ca3af', marginTop: 6 }}>
+              Decentralized yield generation &amp; asset management · TVL: {tvlXLM} XLM
+            </p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1,  y: 0 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.14 }}
-          >
-            <div
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold"
-              style={{
-                background: 'rgba(255,255,255,0.55)',
-                border: '1px solid rgba(0,0,0,0.07)',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <Activity
-                size={11}
-                className={gp.isLoadingData ? 'animate-pulse' : ''}
-                style={{ color: gp.isLoadingData ? '#f59e0b' : '#16a34a' }}
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, paddingTop: 4 }}>
+            {/* Live status pill */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 99, background: '#fff', border: '1px solid rgba(0,0,0,0.07)', fontSize: '0.7rem', fontWeight: 600, color: '#6b7280', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <Activity size={11} style={{ color: gp.isLoadingData ? '#f59e0b' : '#16a34a' }} />
               {gp.isLoadingData ? 'Syncing with Stellar...' : 'Live · Soroban RPC'}
             </div>
-          </motion.div>
+            {/* Rebalance button */}
+            <button
+              onClick={() => alert('Rebalance triggered! (UI Demo)')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 99, background: '#0a0a0f', color: '#fff', border: 'none', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,0.18)' }}
+            >
+              <RefreshCcw size={11} />
+              Trigger Rebalance
+            </button>
+          </div>
         </div>
 
-        {/* ─── Freighter not installed banner ─── */}
+        {/* ── Freighter banner ─────────────────────────────────────── */}
         <AnimatePresence>
           {!gp.isFreighterInstalled && (
             <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1,  y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="mt-4 flex items-center gap-3 px-4 py-3 rounded-2xl text-sm"
-              style={{
-                background: 'rgba(245,158,11,0.07)',
-                border: '1px solid rgba(245,158,11,0.2)',
-                color: '#92400e',
-              }}
+              key="freighter-banner"
+              initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 16, background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.2)', marginBottom: 20 }}
             >
-              <AlertCircle size={16} style={{ color: '#f59e0b', flexShrink: 0 }} />
-              <span className="text-xs font-semibold">
+              <AlertCircle size={15} style={{ color: '#f59e0b', flexShrink: 0 }} />
+              <span style={{ fontSize: '0.72rem', fontWeight: 600, color: '#92400e' }}>
                 Freighter wallet extension is not installed.{' '}
-                <a href="https://freighter.app" target="_blank" rel="noopener noreferrer"
-                  style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                  Install Freighter
-                </a>{' '}
-                to interact with the Gravity Protocol contracts on Stellar.
+                <a href="https://freighter.app" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb' }}>Install Freighter</a>
+                {' '}to interact with the Gravity Protocol contracts on Stellar.
               </span>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ─── Asymmetric Bento Grid ─── */}
-        <div className="bento-grid mt-6" style={{ alignItems: 'start' }}>
+        {/* ── Bento Grid ───────────────────────────────────────────── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto', gap: 16, alignItems: 'start' }}>
 
-          {/* Card A — Portfolio (8 cols, 2 row span) */}
-          <SpecularCard
-            delay={0.06}
-            style={{ gridColumn: 'span 8', gridRow: 'span 2', minHeight: 460 }}
-          >
+          {/* Portfolio card — left, spans 2 rows */}
+          <div style={{ ...card, gridRow: 'span 2', minHeight: 460 }}>
             <PortfolioCard
-              usdBalance={totalUsd > 0 ? totalUsd : 900_000}
+              usdBalance={totalUsd}
               xlmRate={XLM_RATE}
               historyData={history}
               yieldAPY={8.45}
               yieldEarned={gp.vaultShares}
             />
-          </SpecularCard>
+          </div>
 
-          {/* Card B — Allocation (4 cols) */}
-          <SpecularCard delay={0.14} style={{ gridColumn: 'span 4', minHeight: 220 }}>
+          {/* Allocation card — top right */}
+          <div style={{ ...card, minHeight: 220 }}>
             <AllocationCard
-              xlmBalanceUsd={xlmUsd > 0 ? xlmUsd : 300_000}
+              xlmBalanceUsd={xlmUsd  > 0 ? xlmUsd  : 300_000}
               usdcBalanceUsd={usdcUsd > 0 ? usdcUsd : 450_000}
               xlmAmount={(xlmUsd > 0 ? xlmUsd : 300_000) / XLM_RATE}
               usdcAmount={usdcUsd > 0 ? usdcUsd : 450_000}
             />
-          </SpecularCard>
+          </div>
 
-          {/* Card C — Interaction (4 cols) */}
-          <SpecularCard delay={0.22} style={{ gridColumn: 'span 4' }}>
+          {/* Interaction card — bottom right */}
+          <div style={card}>
             <InteractionCard
               usdcBalanceUsd={usdcUsd > 0 ? usdcUsd : 450_000}
               stakedBalanceUsd={stakedUsd > 0 ? stakedUsd : 150_000}
@@ -195,45 +115,32 @@ export default function Dashboard() {
               onWithdraw={gp.withdraw}
               onConnectWallet={gp.connectWallet}
             />
-          </SpecularCard>
+          </div>
         </div>
       </main>
 
-      {/* ─── Global Transaction Toast ─── */}
+      {/* ── Toast ────────────────────────────────────────────────── */}
       <AnimatePresence>
         {(gp.txStatus === 'success' || gp.txStatus === 'error') && (
           <motion.div
+            key="toast"
             initial={{ opacity: 0, y: 24, scale: 0.92 }}
             animate={{ opacity: 1, y: 0,  scale: 1 }}
             exit={{ opacity: 0,   y: -16, scale: 0.92 }}
             transition={{ type: 'spring', stiffness: 340, damping: 26 }}
-            className="fixed bottom-7 right-7 z-50"
+            style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 50 }}
           >
-            <div
-              className="toast"
-              style={{
-                borderColor: gp.txStatus === 'success'
-                  ? 'rgba(22,163,74,0.3)'
-                  : 'rgba(220,38,38,0.3)',
-              }}
-            >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 18px', borderRadius: 16, background: '#fff', border: `1px solid ${gp.txStatus === 'success' ? 'rgba(22,163,74,0.25)' : 'rgba(220,38,38,0.25)'}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', maxWidth: 360 }}>
               {gp.txStatus === 'success'
                 ? <CheckCircle size={15} style={{ color: '#16a34a', flexShrink: 0 }} />
-                : <AlertCircle size={15} style={{ color: '#dc2626', flexShrink: 0 }} />
-              }
-              <div className="flex flex-col gap-0.5">
-                <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>
+                : <AlertCircle  size={15} style={{ color: '#dc2626', flexShrink: 0 }} />}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0a0a0f' }}>
                   {gp.txStatus === 'success' ? 'Transaction Confirmed' : 'Transaction Failed'}
                 </span>
                 {gp.explorerUrl && (
-                  <a
-                    href={gp.explorerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-medium"
-                    style={{ color: '#2563eb', textDecoration: 'underline' }}
-                  >
-                    View on Stellar Expert →
+                  <a href={gp.explorerUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.65rem', fontWeight: 600, color: '#2563eb', display: 'flex', alignItems: 'center', gap: 3 }}>
+                    View on Stellar Expert <ExternalLink size={10} />
                   </a>
                 )}
               </div>
@@ -244,3 +151,19 @@ export default function Dashboard() {
     </div>
   );
 }
+
+const card: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid rgba(0,0,0,0.07)',
+  borderRadius: 24,
+  padding: 24,
+  boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: '0.62rem',
+  fontWeight: 700,
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  color: '#9ca3af',
+};
