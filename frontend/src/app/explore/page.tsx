@@ -25,7 +25,7 @@ export default function ExplorePage() {
     vaultsRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <div className="app-shell" style={{ background: '#f8f8fa', minHeight: '100vh' }}>
+    <div className="app-shell" style={{ background: 'transparent', minHeight: '100vh', color: '#0a0a0f' }}>
       <AntigravityBackground />
       <Navbar />
 

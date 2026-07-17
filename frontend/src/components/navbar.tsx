@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Coins, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { useGravityProtocol } from '@/hooks/useGravityProtocol';
 
 const NAV_LINKS = [
@@ -30,9 +31,14 @@ export function Navbar() {
       }}>
         {/* Logo */}
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg,#2563eb,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(37,99,235,0.25)' }}>
-            <Coins size={14} color="#fff" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Gravity Protocol"
+            width={34}
+            height={34}
+            style={{ borderRadius: 8, objectFit: 'contain' }}
+            priority
+          />
           <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a0a0f', letterSpacing: '-0.02em' }}>
             Gravity Protocol
           </span>

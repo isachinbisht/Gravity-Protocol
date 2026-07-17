@@ -1,56 +1,85 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 
 export default function AntigravityBackground() {
-  // Generate a random spray of colorful dots radiating from center-left
-  const particles = React.useMemo(() => {
-    const arr = [];
-    const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#ef4444', '#f59e0b'];
-    
-    for (let i = 0; i < 150; i++) {
-      // Create a burst pattern from x=20% y=50%
-      const angle = (Math.random() - 0.5) * Math.PI; // -90 to 90 degrees
-      const radius = Math.random() * 60 + 5; // 5vw to 65vw
-      
-      const x = 20 + Math.cos(angle) * radius;
-      const y = 50 + Math.sin(angle) * radius * 1.5; // Stretch vertically
-      
-      const size = Math.random() * 2 + 1; // 1 to 3px
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const opacity = Math.max(0.1, 1 - (radius / 65)); // fade out at edges
-      
-      arr.push({ id: i, x, y, size, color, opacity });
-    }
-    return arr;
+  const [init, setInit] = useState(false);
+
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      // loadSlim is ~80% smaller bundle than loadFull and supports all features we need
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
   }, []);
 
+  // Memoize options so the Particles component never re-renders unnecessarily
+  const options = useMemo(() => ({
+    background: {
+      color: { value: "#ffffff" },
+    },
+    // Cap at 60fps — plenty smooth for a background, halves CPU load vs 120
+    fpsLimit: 60,
+    interactivity: {
+      detectsOn: "window" as const,
+      events: {
+        onHover: {
+          enable: true,
+          mode: "repulse",
+        },
+      },
+      modes: {
+        repulse: {
+          distance: 120,
+          duration: 0.4,
+          factor: 5,   // much lower than 100 — avoids heavy physics bursts
+          speed: 1,
+          maxSpeed: 20,
+        },
+      },
+    },
+    particles: {
+      color: { value: "#3b82f6" },
+      move: {
+        enable: true,
+        direction: "top" as const,
+        random: true,
+        speed: { min: 0.2, max: 0.8 },
+        straight: false,
+        outModes: { default: "out" as const },
+      },
+      number: {
+        // Density-based capping with a hard limit of 60 particles
+        density: { enable: true, width: 1200, height: 1200 },
+        value: 60,
+      },
+      opacity: {
+        value: { min: 0.2, max: 0.6 },
+        // Disable animation — each animated particle adds per-frame CPU work
+        animation: { enable: false },
+      },
+      shape: { type: "circle" },
+      size: {
+        value: { min: 1.5, max: 4 },
+      },
+    },
+    // Disable retina doubling — cuts rendering work in half on HiDPI screens
+    detectRetina: false,
+  }), []);
+
+  if (!init) {
+    return <div className="fixed inset-0 z-[-1] bg-white" />;
+  }
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-[#fafafa]">
-      {/* Subtle radial gradient to brighten the center slightly */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(250,250,250,1) 100%)'
-        }}
+    <div className="fixed inset-0 pointer-events-auto z-[-1]">
+      <Particles
+        id="tsparticles"
+        options={options}
       />
-      
-      {/* Particle effect */}
-      {particles.map(p => (
-        <div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}vw`,
-            top: `${p.y}vh`,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            backgroundColor: p.color,
-            opacity: p.opacity,
-            boxShadow: `0 0 ${p.size * 2}px ${p.color}`,
-          }}
-        />
-      ))}
     </div>
   );
 }
