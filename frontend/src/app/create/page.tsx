@@ -22,7 +22,7 @@ export default function CreateFundWizard() {
   };
 
   return (
-    <div style={{ background: '#f8f8fa', minHeight: '100vh', position: 'relative' }}>
+    <div className="app-shell" style={{ position: 'relative' }}>
       <AntigravityBackground />
       <Navbar />
 
@@ -55,13 +55,13 @@ export default function CreateFundWizard() {
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 18 }}>
             <div style={{ width: 36, height: 36, borderRadius: 12, background: 'linear-gradient(135deg,#2563eb,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}>
-              <Coins size={18} color="#fff" />
+              <Coins size={18} color="var(--bg-void)" />
             </div>
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.04em', color: '#0a0a0f', marginBottom: 10, lineHeight: 1.05 }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', marginBottom: 10, lineHeight: 1.05 }}>
             Deploy a New Vault.
           </h1>
-          <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af' }}>
+          <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
             Create a permissionless on-chain fund — set assets, weights &amp; fee tier.
           </p>
         </div>
@@ -90,12 +90,12 @@ export default function CreateFundWizard() {
                   boxSizing: 'border-box',
                   marginTop: 8,
                   padding: '13px 16px',
-                  background: '#f9fafb',
-                  border: '1px solid #f3f4f6',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid var(--border-outer)',
                   borderRadius: 14,
                   fontSize: '0.82rem',
                   fontWeight: 600,
-                  color: '#0a0a0f',
+                  color: 'var(--text-primary)',
                   outline: 'none',
                   transition: 'border 0.15s',
                   fontFamily: 'inherit',
@@ -147,9 +147,9 @@ export default function CreateFundWizard() {
             </div>
 
             {/* Oracle notice */}
-            <div style={{ marginTop: 20, padding: '12px 16px', background: '#f9fafb', border: '1px solid #f3f4f6', borderRadius: 14, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-              <ShieldCheck size={15} style={{ color: '#374151', flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: '0.65rem', fontWeight: 600, color: '#6b7280', letterSpacing: '0.04em', lineHeight: 1.6, textTransform: 'uppercase' }}>
+            <div style={{ marginTop: 20, padding: '12px 16px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-outer)', borderRadius: 14, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <ShieldCheck size={15} style={{ color: 'var(--text-primary)', flexShrink: 0, marginTop: 1 }} />
+              <p style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.04em', lineHeight: 1.6, textTransform: 'uppercase' }}>
                 Prices monitored via the on-chain Reflector oracle. Swaps execute automatically through the Stellar DEX.
               </p>
             </div>
@@ -176,19 +176,19 @@ export default function CreateFundWizard() {
                   style={{
                     width: 96,
                     padding: '13px 36px 13px 16px',
-                    background: '#f9fafb',
-                    border: '1px solid #f3f4f6',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid var(--border-outer)',
                     borderRadius: 14,
                     fontSize: '0.88rem',
                     fontWeight: 700,
                     fontFamily: 'monospace',
-                    color: '#0a0a0f',
+                    color: 'var(--text-primary)',
                     outline: 'none',
                   }}
                   onFocus={e => (e.target.style.border = '1px solid #d1d5db')}
                   onBlur={e => (e.target.style.border = '1px solid #f3f4f6')}
                 />
-                <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af', pointerEvents: 'none' }}>%</span>
+                <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', pointerEvents: 'none' }}>%</span>
               </div>
 
               {/* Quick preset buttons */}
@@ -218,7 +218,7 @@ export default function CreateFundWizard() {
             </div>
 
             {/* Fee bar visualiser */}
-            <div style={{ marginTop: 16, height: 6, borderRadius: 99, background: '#f3f4f6', overflow: 'hidden' }}>
+            <div style={{ marginTop: 16, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
               <div
                 style={{
                   height: '100%',
@@ -237,10 +237,10 @@ export default function CreateFundWizard() {
 
           {/* Review summary */}
           {fundName && (
-            <div style={{ padding: '16px 20px', background: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.03)' }}>
+            <div style={{ padding: '16px 20px', background: 'var(--bg-card)', border: '1px solid var(--border-outer)', borderRadius: 18, display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.03)' }}>
               <div>
-                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af', marginBottom: 4 }}>Review</div>
-                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a0a0f' }}>{fundName}</div>
+                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: 4 }}>Review</div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>{fundName}</div>
               </div>
               <div style={{ display: 'flex', gap: 20 }}>
                 <Stat label="XLM" value={`${xlmWeight}%`} />
@@ -256,8 +256,8 @@ export default function CreateFundWizard() {
             style={{
               width: '100%',
               padding: '16px 0',
-              background: '#0a0a0f',
-              color: '#fff',
+              background: 'var(--text-primary)',
+              color: 'var(--bg-void)',
               border: 'none',
               borderRadius: 18,
               fontSize: '0.72rem',
@@ -290,7 +290,7 @@ export default function CreateFundWizard() {
 function StepBadge({ n }: { n: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-      <div style={{ width: 28, height: 28, borderRadius: 9, background: '#0a0a0f', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 800, flexShrink: 0 }}>
+      <div style={{ width: 28, height: 28, borderRadius: 9, background: 'var(--text-primary)', color: 'var(--bg-void)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 800, flexShrink: 0 }}>
         {n}
       </div>
     </div>
@@ -302,14 +302,14 @@ function AllocationBar({ symbol, letter, pct }: { symbol: string; letter: string
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#0a0a0f', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 800 }}>
+          <span style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--text-primary)', color: 'var(--bg-void)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 800 }}>
             {letter}
           </span>
-          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0a0a0f' }}>{symbol}</span>
+          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>{symbol}</span>
         </div>
-        <span style={{ fontSize: '0.78rem', fontWeight: 700, fontFamily: 'monospace', color: '#0a0a0f' }}>{pct}%</span>
+        <span style={{ fontSize: '0.78rem', fontWeight: 700, fontFamily: 'monospace', color: 'var(--text-primary)' }}>{pct}%</span>
       </div>
-      <div style={{ height: 26, borderRadius: 999, background: '#f3f4f6', padding: 2, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
+      <div style={{ height: 26, borderRadius: 999, background: 'rgba(255,255,255,0.1)', padding: 2, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
         <div
           style={{
             height: '100%',
@@ -327,33 +327,33 @@ function AllocationBar({ symbol, letter, pct }: { symbol: string; letter: string
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9ca3af' }}>{label}</div>
-      <div style={{ fontSize: '0.82rem', fontWeight: 800, fontFamily: 'monospace', color: '#0a0a0f', marginTop: 2 }}>{value}</div>
+      <div style={{ fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-secondary)' }}>{label}</div>
+      <div style={{ fontSize: '0.82rem', fontWeight: 800, fontFamily: 'monospace', color: 'var(--text-primary)', marginTop: 2 }}>{value}</div>
     </div>
   );
 }
 
 /* ─────────── shared styles ───────────────────────────────────────────── */
 const card: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid rgba(0,0,0,0.07)',
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border-outer)',
   borderRadius: 24,
   padding: 24,
-  boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+  boxShadow: 'var(--shadow-card)', backdropFilter: 'blur(24px)',
 };
 
 const sectionTitle: React.CSSProperties = {
   fontSize: '0.82rem',
   fontWeight: 800,
   letterSpacing: '-0.01em',
-  color: '#0a0a0f',
+  color: 'var(--text-primary)',
   marginTop: 2,
 };
 
 const sectionDesc: React.CSSProperties = {
   fontSize: '0.68rem',
   fontWeight: 500,
-  color: '#9ca3af',
+  color: 'var(--text-secondary)',
   marginTop: 4,
   lineHeight: 1.5,
 };
@@ -363,5 +363,5 @@ const fieldLabel: React.CSSProperties = {
   fontWeight: 700,
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  color: '#9ca3af',
+  color: 'var(--text-secondary)',
 };

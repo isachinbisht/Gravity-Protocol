@@ -4,96 +4,90 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Wallet } from 'lucide-react';
-import { useGravityProtocol } from '@/hooks/useGravityProtocol';
+import { ExternalLink } from 'lucide-react';
 
 const NAV_LINKS = [
-  { label: 'Dashboard',     href: '/' },
+  { label: 'Dashboard',     href: '/dashboard' },
   { label: 'Fund Explorer', href: '/explore' },
   { label: 'Create Fund',   href: '/create' },
 ];
 
 export function Navbar() {
-  const gp       = useGravityProtocol();
   const pathname = usePathname();
 
   return (
     <header style={{
-      position: 'sticky', top: 0, zIndex: 100,
-      background: 'rgba(248,248,250,0.85)',
-      backdropFilter: 'blur(24px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-      borderBottom: '1px solid rgba(0,0,0,0.06)',
+      position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
+      background: 'transparent',
+      borderBottom: 'none',
     }}>
       <nav style={{
-        maxWidth: 1120, margin: '0 auto', padding: '0 28px',
-        height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
+        maxWidth: 1200, margin: '0 auto', padding: '0 24px',
+        height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
       }}>
-        {/* Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none' }}>
-          <Image
-            src="/logo.png"
-            alt="Gravity Protocol"
-            width={34}
-            height={34}
-            style={{ borderRadius: 8, objectFit: 'contain' }}
-            priority
-          />
-          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0a0a0f', letterSpacing: '-0.02em' }}>
-            Gravity Protocol
-          </span>
-        </Link>
+        {/* Left section: Logo + Nav links */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={20}
+              height={32}
+              style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+              priority
+            />
+          </Link>
 
-        {/* Nav links */}
-        <ul style={{ display: 'flex', alignItems: 'center', gap: 2, listStyle: 'none', margin: 0, padding: 0 }}>
-          {NAV_LINKS.map(link => {
-            const active = pathname === link.href;
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  style={{
-                    position: 'relative', display: 'block',
-                    padding: '6px 14px', fontSize: '0.82rem',
-                    fontWeight: active ? 700 : 500,
-                    color: active ? '#0a0a0f' : '#6b7280',
-                    textDecoration: 'none',
-                    transition: 'color 0.15s',
-                  }}
-                >
-                  {link.label}
-                  {active && (
-                    <span style={{ position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)', width: 20, height: 2, background: '#0a0a0f', borderRadius: 2 }} />
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          {/* Nav links */}
+          <ul style={{ display: 'flex', alignItems: 'center', gap: 24, listStyle: 'none', margin: 0, padding: 0 }}>
+            {NAV_LINKS.map(link => {
+              const active = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    style={{
+                      position: 'relative', display: 'block',
+                      fontSize: '0.95rem',
+                      fontWeight: 400,
+                      color: active ? '#ffffff' : '#888888',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s ease',
+                      fontFamily: 'system-ui, -apple-system, sans-serif'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = active ? '#ffffff' : '#888888')}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
-        {/* Right — network + wallet */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Stellar Testnet badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 99, background: '#fff', border: '1px solid rgba(0,0,0,0.07)', fontSize: '0.72rem', fontWeight: 600, color: '#6b7280', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#2563eb', display: 'inline-block', opacity: 0.85 }} />
-            Stellar Testnet
-          </div>
-
-          {/* Wallet chip */}
-          {gp.isConnected && gp.shortAddress ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 12px', borderRadius: 99, background: '#fff', border: '1px solid rgba(0,0,0,0.07)', fontSize: '0.76rem', fontWeight: 600, color: '#0a0a0f', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-              <span style={{ width: 18, height: 18, borderRadius: '50%', background: 'linear-gradient(135deg,#8b5cf6,#06b6d4)', display: 'inline-block', flexShrink: 0 }} />
-              {gp.shortAddress}
-            </div>
-          ) : (
-            <button
-              onClick={gp.connectWallet}
-              style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 99, background: '#0a0a0f', color: '#fff', border: 'none', fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 3px 10px rgba(0,0,0,0.18)', transition: 'background 0.15s' }}
-            >
-              <Wallet size={13} />
-              {gp.isFreighterInstalled ? 'Connect Wallet' : 'Install Freighter'}
-            </button>
-          )}
+        {/* Right — Developers Action */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link
+            href="/dashboard"
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: 8, 
+              padding: '10px 16px', 
+              background: '#111111', 
+              color: '#ffffff', 
+              textDecoration: 'none',
+              fontSize: '0.75rem', 
+              fontWeight: 600, 
+              letterSpacing: '0.05em',
+              transition: 'background 0.2s',
+              fontFamily: 'system-ui, -apple-system, sans-serif'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#222')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#111')}
+          >
+            LAUNCH APP <ExternalLink size={14} />
+          </Link>
         </div>
       </nav>
     </header>
